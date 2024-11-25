@@ -21,11 +21,11 @@ Sockets: Para implementação da comunicação em tempo real no backend.
 ### Nota: A interface exibida abaixo está em desenvolvimento e sujeita a alterações. 
 <br>
 
-![Interface do Projeto](imgChat\img_chat.png)
+![Interface do Projeto](img_chat.png)
 
 <br><br>
 
-![Interface do Projeto](imgChat\img-chat.png)
+![Interface do Projeto](img-chat.png)
 
 <br>
 
