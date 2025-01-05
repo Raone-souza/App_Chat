@@ -1,117 +1,98 @@
-import customtkinter as ctk
+import customtkinter as ctk  # Importa a biblioteca CustomTkinter para criar interfaces modernas
+import socket  # Importa a biblioteca socket para comunicação em rede
+import threading  # Importa threading para lidar com threads paralelas
 
-ctk.set_appearance_mode("dark")
-ctk.set_default_color_theme("green")
+# Configuração do cliente
+HOST = '127.0.0.1'  # IP do servidor local (loopback)
+PORT = 12345        # Porta do servidor para a comunicação
 
-janela = ctk.CTk()
-janela.title("TalkMe")
-janela.geometry("400x600")
-janela.resizable(False, False)
+# Criação do socket do cliente
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # Configura o socket para conexão TCP/IP
 
-# Tela de início com fundo aprimorado
-fundo = ctk.CTkFrame(janela, width=400, height=600, corner_radius=0, fg_color="#1e1e1e")
-fundo.place(relx=0.5, rely=0.5, anchor=ctk.CENTER)
+# Inicialização do Tkinter
+app = ctk.CTk()  # Inicializa o aplicativo com CustomTkinter
+app.title("Login - Chat Local")  # Define o título da janela
+app.geometry("400x300")  # Define o tamanho inicial da janela
 
-# Logo com um novo estilo
-logo = ctk.CTkLabel(fundo, text="TalkMe", font=ctk.CTkFont("Helvetica", 38, "bold"), text_color="#34C759")
-logo.place(relx=0.5, rely=0.1, anchor=ctk.CENTER)
+# Tela de Login
+login_frame = ctk.CTkFrame(app)  # Frame principal para a tela de login
+login_frame.pack(fill="both", expand=True, padx=20, pady=20)
 
-# Subtítulo ajustado para harmonizar com o design
-subtitulo = ctk.CTkLabel(fundo, text="Conecte-se com o mundo", font=ctk.CTkFont("Helvetica", 15, slant="italic"), text_color="#a0a0a0")
-subtitulo.place(relx=0.5, rely=0.17, anchor=ctk.CENTER)
+label_title = ctk.CTkLabel(login_frame, text="Bem-vindo ao Chat!", font=("Arial", 20))  # Título da tela
+label_title.pack(pady=20)
 
-# Mensagem acima do campo de entrada do nome de usuário
-mensagem_usuario = ctk.CTkLabel(fundo, text="Digite seu nome de usuário para entrar", font=ctk.CTkFont("Helvetica", 12), text_color="#a0a0a0")
-mensagem_usuario.place(relx=0.5, rely=0.4, anchor=ctk.CENTER)
+username_label = ctk.CTkLabel(login_frame, text="Digite seu nome de usuário:")  # Rótulo para o campo de nome
+username_label.pack()
 
-# Entrada de nome de usuário com sombras e bordas mais suaves
-nome_usuario = ctk.CTkEntry(
-    fundo,
-    width=250,
-    height=40,
-    corner_radius=10,
-    placeholder_text="Nome de usuário",
-    placeholder_text_color="#555555",
-    fg_color="#2e2e2e",
-    text_color="white"
-)
-nome_usuario.place(relx=0.5, rely=0.47, anchor=ctk.CENTER)
+username_entry = ctk.CTkEntry(login_frame, placeholder_text="Seu nome...")  # Campo de entrada para o nome do usuário
+username_entry.pack(pady=10, padx=20, fill="x")
 
-# Botão Entrar aprimorado com um gradiente e efeito hover
-botao_entrar = ctk.CTkButton(
-    fundo,
-    text="Entrar",
-    width=220,
-    height=40,
-    corner_radius=15,
-    fg_color="#34C759",
-    text_color="white",
-    hover_color="#2dbb50",
-    font=ctk.CTkFont(family="Helvetica", size=16, weight="bold")
-)
-botao_entrar.place(relx=0.5, rely=0.56, anchor=ctk.CENTER)
+error_label = ctk.CTkLabel(login_frame, text="", text_color="red")  # Rótulo para exibir erros de conexão
+error_label.pack()
 
-def entrar():
-    nome = nome_usuario.get()
-    if nome:
-        nova_janela(nome)
+# Função para conectar ao servidor
+def conectar():
+    username = username_entry.get()  # Obtém o nome do usuário
+    if username:  # Verifica se o nome não está vazio
+        try:
+            client_socket.connect((HOST, PORT))  # Conecta ao servidor
+            client_socket.send(username.encode('utf-8'))  # Envia o nome do usuário ao servidor
+            login_frame.pack_forget()  # Remove a tela de login
+            chat_screen(username)     # Chama a função para abrir a tela de chat
+        except Exception as e:
+            error_label.configure(text="Erro ao conectar! Verifique o servidor.")  # Exibe erro de conexão
 
-botao_entrar.configure(command=entrar)
+connect_button = ctk.CTkButton(login_frame, text="Entrar", command=conectar)  # Botão para entrar no chat
+connect_button.pack(pady=20)
 
-# Função para a nova janela de chat
-def nova_janela(usuario):
-    # Limpa todos os widgets da janela inicial
-    for widget in janela.winfo_children():
-        widget.place_forget()
+# Tela de Chat
+def chat_screen(username):
+    chat_frame = ctk.CTkFrame(app)  # Frame principal para a tela de chat
+    chat_frame.pack(fill="both", expand=True)
 
-    # Criação da área de chat
-    chat_frame = ctk.CTkFrame(janela, width=400, height=600, corner_radius=0, fg_color="#1e1e1e")
-    chat_frame.place(relx=0.5, rely=0.5, anchor=ctk.CENTER)
+    message_box = ctk.CTkTextbox(chat_frame, wrap="word")  # Caixa de texto para exibir mensagens
+    message_box.pack(fill="both", expand=True, padx=10, pady=10)
+    message_box.configure(state="disabled")  # Caixa desabilitada para impedir edição manual
 
-    # Frame para o cabeçalho com o texto "Bem-vindo"
-    cabecalho_frame = ctk.CTkFrame(chat_frame, width=400, height=54, corner_radius=10, fg_color="#2f2f2f")
-    cabecalho_frame.place(relx=0.5, rely=0.01, anchor=ctk.N)  # Cabeçalho fixo no topo
-
-    # Cabeçalho fixo no topo da janela
-    cabecalho = ctk.CTkLabel(cabecalho_frame, text=f"Bem-vindo, {usuario}", font=ctk.CTkFont("Helvetica", 20, "bold"), text_color="white")
-    cabecalho.place(relx=0.5, rely=0.5, anchor=ctk.CENTER)
-
-    # Área de mensagens abaixo do cabeçalho
-    message_area = ctk.CTkFrame(chat_frame, width=380, height=430, fg_color="#1e1e1e")
-    message_area.place(relx=0.5, rely=0.1, anchor=ctk.N)
-
-    # Janela de exibição das mensagens
-    message_display = ctk.CTkTextbox(message_area, width=400, height=480, corner_radius=10, fg_color="#2f2f2f", text_color="white")
-    message_display.pack(pady=2)
-    message_display.insert("end", "Você entrou no chat...\n")
-    message_display.configure(state="disabled")
-
-    # Variável para controlar se é a primeira mensagem
-    primeira_mensagem = True
-
-    # Área de entrada de mensagem
-    message_entry_frame = ctk.CTkFrame(chat_frame, width=400, height=50, fg_color="#2b2b2b", corner_radius=10)
-    message_entry_frame.place(relx=0.5, rely=1, anchor=ctk.S)
-
-    message_entry = ctk.CTkEntry(message_entry_frame, width=280, height=35, placeholder_text="Digite sua mensagem...", fg_color="#2f2f2f", text_color="white")
-    message_entry.pack(side="left", padx=10, pady=10)
+    message_entry = ctk.CTkEntry(chat_frame, placeholder_text="Digite sua mensagem...")  # Campo de entrada para mensagens
+    message_entry.pack(side="left", fill="x", expand=True, padx=10, pady=10)
 
     # Função para enviar mensagens
     def enviar_mensagem():
-        nonlocal primeira_mensagem
-        mensagem = message_entry.get()
-        if mensagem:
-            message_display.configure(state="normal")
-            if primeira_mensagem:
-                # Limpa a mensagem inicial apenas na primeira vez
-                message_display.delete("1.0", "end")
-                primeira_mensagem = False
-            message_display.insert("end", f"{usuario}: {mensagem}\n")
-            message_display.configure(state="disabled")
-            message_entry.delete(0, "end")
+        message = message_entry.get()  # Obtém o texto da mensagem
+        if message:
+            try:
+                client_socket.send(message.encode('utf-8'))  # Envia a mensagem ao servidor
+                message_box.configure(state="normal")
+                message_box.insert("end", f"Você: {message}\n")  # Exibe a mensagem na tela
+                message_box.configure(state="disabled")
+                message_entry.delete(0, "end")  # Limpa o campo de entrada
+            except:
+                message_box.configure(state="normal")
+                message_box.insert("end", "Erro ao enviar mensagem.\n")
+                message_box.configure(state="disabled")
 
-    # Botão de envio de mensagem
-    send_button = ctk.CTkButton(message_entry_frame, text="Enviar", width=80, fg_color="#34C759", hover_color="#2dbb50", text_color="white", command=enviar_mensagem)
+    send_button = ctk.CTkButton(chat_frame, text="Enviar", command=enviar_mensagem)  # Botão para enviar mensagem
     send_button.pack(side="right", padx=10, pady=10)
 
-janela.mainloop()
+    # Função para receber mensagens do servidor
+    def receber_mensagens():
+        while True:
+            try:
+                message = client_socket.recv(1024).decode('utf-8')  # Recebe mensagens do servidor
+                if message:
+                    message_box.configure(state="normal")
+                    message_box.insert("end", f"{message}\n")  # Exibe a mensagem recebida na tela
+                    message_box.configure(state="disabled")
+            except:
+                message_box.configure(state="normal")
+                message_box.insert("end", "Desconectado do servidor.\n")  # Notifica o cliente sobre a desconexão
+                message_box.configure(state="disabled")
+                client_socket.close()  # Fecha a conexão do socket
+                break
+
+    # Thread para receber mensagens continuamente sem travar a interface
+    threading.Thread(target=receber_mensagens, daemon=True).start()
+
+# Inicializa o loop principal da interface
+app.mainloop()
