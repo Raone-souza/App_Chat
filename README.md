@@ -1,73 +1,69 @@
-# Chat Local multiusuário com Python
+## Sobre o Projeto
 
-Este é um aplicativo desenvolvido em Python com a biblioteca CustomTkinter, projetado para facilitar a troca de mensagens em tempo real dentro de uma rede local.  O sistema é composto por um cliente e um servidor, permitindo que múltiplos usuários se conectem e se comuniquem de forma eficiente.
-
-
-## Funcionalidades
-
-### 1. **CRUD Parcial**
-Implementei um **CRUD básico** (Create, Read, Update, Delete) para a gestão de usuários. Com isso, agora é possível cadastrar, visualizar e manipular dados de forma eficiente, melhorando a usabilidade e a organização do sistema.
-
-### 2. **Banco de Dados Integrado**
-O sistema agora armazena dados de **login e cadastro** de usuários em um banco de dados local, garantindo maior segurança e praticidade no gerenciamento dessas informações. O uso do banco de dados facilita a manutenção e a escalabilidade do sistema.
-
-### 3. **Validação de Dados de Login**
-Implementei uma **consulta ao banco de dados** para validar as credenciais dos usuários durante o processo de login. Isso oferece uma **autenticação mais confiável** e aumenta a segurança do sistema, evitando acessos indevidos.
-
-### 4. **Automação com Subprocess**
-Utilizei a biblioteca **subprocess** para **iniciar o servidor automaticamente**, facilitando o processo de execução do sistema sem a necessidade de iniciar manualmente o servidor, tornando o ambiente de desenvolvimento mais ágil.
-
-### 5. **Comunicação em Tempo Real com Sockets e Threading**
-A comunicação entre o **servidor e os clientes** agora utiliza **sockets e threading**, permitindo uma **interação rápida e em tempo real**. Isso proporciona uma experiência de uso mais dinâmica, com mensagens sendo enviadas e recebidas instantaneamente.
-
-### 6. **Melhorias de Design**
-A interface gráfica foi **reformulada e otimizada**, tornando o sistema **mais moderno, intuitivo e visualmente atraente**. Com isso, a experiência do usuário foi significativamente aprimorada, tornando o uso do aplicativo mais agradável.
-
-### 7. **Melhorias de Performance**
-O sistema está agora mais rápido e fluido, com **otimizações no fluxo de dados e navegação**, o que garante uma performance mais eficiente e uma resposta mais ágil, especialmente em operações mais intensivas.
-
+O Library Management System ( Sistema de Gerenciamento de Biblioteca ) é uma Web API desenvolvida para facilitar a gestão de livros, usuários e empréstimos em uma biblioteca. O sistema permite cadastro, consulta, edição e remoção de registros, proporcionando uma administração eficiente dos recursos da biblioteca.
 
 ## Tecnologias Utilizadas
 
-- Sockets e Threading: Para implementar comunicação em tempo real, permitindo uma interação rápida e eficaz entre o servidor e os clientes.
+- **Linguagem: C#**
+- **Framework: .NET Core / .NET 6+**
+- **Banco de Dados: SQL Server**
+- **ORM: Entity Framework Core**
+- **Documentação: Swagger**
+- **Gerenciamento de Dependências: NuGet**
 
-- CustomTkinter: Utilizada para criar uma interface gráfica intuitiva e moderna.
+## Principais funcionalidades
 
-- PyMySQL: Para integrar o sistema com o banco de dados MySQL, facilitando o armazenamento e a consulta dos dados de login e cadastro.
-
-- Subprocess: Utilizado para automatizar a execução do servidor, simplificando o processo de inicialização do sistema.
-
-- OS: Para manipulação do sistema e execução de comandos diretamente do código Python, proporcionando mais controle e flexibilidade na execução.
+- **Cadastro de livros, usuários e empréstimos.**
+- **Consulta de livros disponíveis**
+- **Documentação interativa via Swagger**
 
 
 ## Como Executar o Projeto
 
-### Pré-requisitos:
-- Python 3.10 ou superior instalado.
+### 1. Configurar o Ambiente
 
-### Instalar as dependências do projeto:
+`Instale o .NET SDK 6+`
 
-`pip install -r requirements.txt`
+`Instale o SQL Server e crie um banco de dados`
 
-### Executando o Cliente:
+### 2. Rodar o Projeto
 
-- Navegue até a pasta do projeto.
-Execute o arquivo da interface gráfica:
+#### Clone este repositório:
 
-`python App.py`
+`git clone https://github.com/Raone-souza/library-management-system.git`
 
+### Navegue até a pasta do projeto:
 
+`cd library-management-system`
 
-## Contribuições
+### Configure a string de conexão no appsettings.json:
 
-Contribuições são bem-vindas!
-Se você deseja contribuir, por favor, abra um pull request ou entre em contato pelo e-mail acima.
+`"ConnectionStrings": {
+   "DefaultConnection": "Server=SEU_SERVIDOR;Database=BibliotecaDB;Trusted_Connection=True;"
+}`
 
+### Aplique as migrações do banco de dados:
 
-## Contato
+`dotnet ef database update`
 
-**Caso tenha interesse ou dúvidas sobre o projeto, entre em contato comigo:**
+### Execute a API:
 
-- E-mail: raone199807@gmail.com
-- LinkedIn: https://www.linkedin.com/in/raonesouza/
-- GitHub: https://github.com/Raone-souza
+`dotnet run`
+
+### 3. Acessar a API
+
+` Acesse a documentação no Swagger: http://localhost:5000/swagger`
+
+### Contribuição
+
+**Contribuições são bem-vindas! Para contribuir:**
+
+- Faça um fork do projeto
+
+- Crie uma branch: git checkout -b minha-feature
+
+- Faça suas alterações e commit: git commit -m 'Nova funcionalidade'
+
+- Envie para o repositório: git push origin minha-feature
+
+- Abra um Pull Request
